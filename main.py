@@ -24,7 +24,6 @@ def main():
             result = sub(matrix_a, matrix_b)
             print("Subtraction completed.")
         elif choice == '3':
-            print("Multiplying matrices (this may take a moment for large matrices)...")
             result = force_mult(matrix_a, matrix_b)
             print("Multiplication completed.")
         else:
