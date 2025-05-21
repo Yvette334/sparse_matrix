@@ -119,26 +119,20 @@ def force_mult(matrix1, matrix2):
     except:
         pass
     
-    # If the dimensions don't match
-    print(f"Note: Matrix dimensions don't match for standard multiplication.")
-    print(f"Matrix 1: {matrix1.rows}x{matrix1.cols}, Matrix 2: {matrix2.rows}x{matrix2.cols}")
-    
     # Transpose matrix2 for compatiblity
     if matrix1.cols == matrix2.cols:
-        print("Transposing second matrix to make multiplication possible...")
+        print("multiplying take time...")
         transposed_matrix2 = transpose_matrix(matrix2)
         return mult(matrix1, transposed_matrix2)
     
     # make dimensions compatible
     elif matrix1.rows == matrix2.rows:
-        print("Transposing first matrix to make multiplication possible...")
         transposed_matrix1 = transpose_matrix(matrix1)
         result = mult(transposed_matrix1, matrix2)
         # Transpose result back to maintain expected dimensions
         return transpose_matrix(result)
     
     else:
-        print("Using element-wise multiplication (Hadamard product)...")
         # Use the smaller dimensions for the result
         rows = min(matrix1.rows, matrix2.rows)
         cols = min(matrix1.cols, matrix2.cols)
