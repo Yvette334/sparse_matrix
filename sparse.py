@@ -109,7 +109,7 @@ def mult(a, b):
     return result
 
     # force mult
-def force_mult(a, b):
+def fmult(a, b):
     
     # Do first multi
     try:
