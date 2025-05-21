@@ -43,35 +43,35 @@ def save(matrix, filename):
         for (row, col), value in sorted(matrix.ez()):
             file.write(f"({row},{col},{value})\n")
 
-def size(matrix1, matrix2, operation):
+def size(a, b, operation):
     # size of the matrix
     if operation in ('add', 'subtract'):
-        if matrix1.rows != matrix2.rows or matrix1.cols != matrix2.cols:
+        if a.rows != b.rows or a.cols != b.cols:
             raise ValueError("Matrix sizes don't match for this operation")
     elif operation == 'multiply':
-        if matrix1.cols != matrix2.rows:
+        if a.cols != b.rows:
             raise ValueError("Columns of first matrix must match rows of second matrix for multiplication")
 
-def add(matrix1, matrix2):
-    size(matrix1, matrix2, 'add')
-    result = sparsematrix(matrix1.rows, matrix1.cols)
+def add(a, b):
+    size(a, b, 'add')
+    result = sparsematrix(a.rows, b.cols)
     
-    for (row, col), value in matrix1.ez():
+    for (row, col), value in a.ez():
         result.vs(row, col, value)
     
-    for (row, col), value in matrix2.ez():
+    for (row, col), value in b.ez():
         result.vs(row, col, result.gvalue(row, col) + value)
     
     return result
 
-def sub(matrix1, matrix2):
-    size(matrix1, matrix2, 'subtract')
-    result = sparsematrix(matrix1.rows, matrix1.cols)
+def sub(a, b):
+    size(a, b, 'subtract')
+    result = sparsematrix(a.rows, b.cols)
     
-    for (row, col), value in matrix1.ez():
+    for (row, col), value in a.ez():
         result.vs(row, col, value)
     
-    for (row, col), value in matrix2.ez():
+    for (row, col), value in b.ez():
         result.vs(row, col, result.gvalue(row, col) - value)
     
     return result
@@ -85,23 +85,23 @@ def transpose_matrix(matrix):
     
     return result
 
-def mult(matrix1, matrix2):
+def mult(a, b):
     # multiply
-    result = sparsematrix(matrix1.rows, matrix2.cols)
+    result = sparsematrix(a.rows, b.cols)
     
-    # Group matrix2 elements by row for faster access
-    matrix2_by_row = {}
-    for (row, col), value in matrix2.ez():
-        if row not in matrix2_by_row:
-            matrix2_by_row[row] = []
-        matrix2_by_row[row].append((col, value))
+    # Group b elements by row for faster access
+    b_by_row = {}
+    for (row, col), value in b.ez():
+        if row not in b_by_row:
+            b_by_row[row] = []
+        b_by_row[row].append((col, value))
     
-    # For each non-zero element in matrix1
-    for (row1, col1), value1 in matrix1.ez():
-        # Any non-zero elements in the corresponding row of matrix2
-        if col1 in matrix2_by_row:
-            # Non-zero element in that row of matrix2
-            for col2, value2 in matrix2_by_row[col1]:
+    # For each non-zero element in a
+    for (row1, col1), value1 in a.ez():
+        # Any non-zero elements in the corresponding row of b
+        if col1 in b_by_row:
+            # Non-zero element in that row of b
+            for col2, value2 in b_by_row[col1]:
                 # Update position (row1, col2)
                 current = result.gvalue(row1, col2)
                 result.vs(row1, col2, current + value1 * value2)
@@ -109,39 +109,39 @@ def mult(matrix1, matrix2):
     return result
 
     # force mult
-def force_mult(matrix1, matrix2):
+def force_mult(a, b):
     
     # Do first multi
     try:
         # Check if it is  compatible for multiplication
-        if matrix1.cols == matrix2.rows:
-            return mult(matrix1, matrix2)
+        if a.cols == b.rows:
+            return mult(a, b)
     except:
         pass
     
-    # Transpose matrix2 for compatiblity
-    if matrix1.cols == matrix2.cols:
+    # Transpose b for compatiblity
+    if a.cols == b.cols:
         print("multiplying take time...")
-        transposed_matrix2 = transpose_matrix(matrix2)
-        return mult(matrix1, transposed_matrix2)
+        transposed_b = transpose_matrix(b)
+        return mult(a, transposed_b)
     
     # make dimensions compatible
-    elif matrix1.rows == matrix2.rows:
-        transposed_matrix1 = transpose_matrix(matrix1)
-        result = mult(transposed_matrix1, matrix2)
+    elif a.rows == b.rows:
+        transposed_a = transpose_matrix(a)
+        result = mult(transposed_a, b)
         # Transpose result back to maintain expected dimensions
         return transpose_matrix(result)
     
     else:
         # Use the smaller dimensions for the result
-        rows = min(matrix1.rows, matrix2.rows)
-        cols = min(matrix1.cols, matrix2.cols)
+        rows = min(a.rows, b.rows)
+        cols = min(a.cols, b.cols)
         result = sparsematrix(rows, cols)
         
         # Multiply data
-        for (row1, col1), value1 in matrix1.ez():
+        for (row1, col1), value1 in a.ez():
             if row1 < rows and col1 < cols:
-                value2 = matrix2.gvalue(row1, col1)
+                value2 = b.gvalue(row1, col1)
                 if value2 != 0:
                     result.vs(row1, col1, value1 * value2)
         
