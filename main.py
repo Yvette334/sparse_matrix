@@ -1,4 +1,4 @@
-from sparse import read, add, sub, mult, force_mult, save
+from sparse import read, add, sub, mult, fmult, save
 
 def main():
     print("Matrix Calculator")
@@ -24,7 +24,7 @@ def main():
             result = sub(matrix_a, matrix_b)
             print("Subtraction completed.")
         elif choice == '3':
-            result = force_mult(matrix_a, matrix_b)
+            result = fmult(matrix_a, matrix_b)
             print("Multiplication completed.")
         else:
             print("Invalid choice. Please select 1, 2, or 3.")
